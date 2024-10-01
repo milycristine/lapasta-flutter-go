@@ -1,0 +1,9 @@
+api:
+  host: localhost
+  port: "8080"
+
+sql:
+  host: localhost
+  port: "1433"  
+  database: "lapasta"  
+  integrated_security: true 

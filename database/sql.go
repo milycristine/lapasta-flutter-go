@@ -1,0 +1,29 @@
+package sql
+
+import (
+    "context"
+    "database/sql"
+    "fmt"
+    "net/url"
+
+    _ "github.com/denisenkom/go-mssqldb"
+)
+
+func MakeSQL(host, port, username, password string) (*SQLStr, error) {
+    server := &SQLStr{}
+    server.url = &url.URL{
+        Scheme:   "sqlserver",
+        User:     url.UserPassword(username, password),
+        Host:     fmt.Sprintf("%s:%s", host, port),
+        RawQuery: url.Values{}.Encode(),
+    }
+    return server, server.connect()
+}
+
+func (server *SQLStr) connect() error {
+    var err error
+    if server.db, err = sql.Open("sqlserver", server.url.String()); err != nil {
+        return err
+    }
+    return server.db.PingContext(context.Background())
+}

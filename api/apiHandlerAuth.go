@@ -3,12 +3,14 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"lapasta/models"
 	"log"
 	"net/http"
-	"lapasta/models"
+
+	_ "github.com/denisenkom/go-mssqldb"
 )
 
-//requisição de login
+// Requisição de login
 func Login(w http.ResponseWriter, r *http.Request) {
 	client := models.Login{}
 
@@ -20,21 +22,45 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := validateCredentials(client.Email, client.Senha); err != nil {
+	if err := validateCredentials(w, client.Username, client.Password); err != nil {
 		sendSimpleResponse(w, "ERROR", err.Error(), http.StatusUnauthorized)
 		return
 	}
-	sendSuccessResponse(w, client.Email)
+	sendSuccessResponse(w, client.Username)
 }
 
-func validateCredentials(email, senha string) error {
-	log.Printf("Validando usuário: %s", email)
-	if email != "usuario@exemplo.com" || senha != "senha123" {
+// Função para validar as credenciais do usuário
+func validateCredentials(w http.ResponseWriter, username, senha string) error {
+	log.Printf("Validando usuário: %s", username)
+
+	data, err := connectionDb.Autenticar(username)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(models.Response{
+			Status: "Bad Request",
+			Error:  "",
+			Data:   err.Error(),
+		})
+
+	}
+
+	// Compara a senha fornecida com o hash armazenado
+	if !comparePasswords(data.Password, senha) {
 		return fmt.Errorf("Nome ou senha inválidos")
 	}
+
 	return nil
 }
 
+// Função para comparar a senha fornecida com o hash armazenado
+func comparePasswords(hash string, senha string) bool {
+	if hash == senha {
+		return true
+	}
+	return false
+}
+
+// Funções de resposta simples e sucesso
 func sendSimpleResponse(w http.ResponseWriter, status, errorMsg string, code int) {
 	response := map[string]interface{}{
 		"status": status,
@@ -44,7 +70,7 @@ func sendSimpleResponse(w http.ResponseWriter, status, errorMsg string, code int
 	w.WriteHeader(code)
 	err := json.NewEncoder(w).Encode(response)
 	if err != nil {
-		log.Printf("Erro ao codificar resposta simples: %v", err) // Log do erro
+		log.Printf("Erro ao codificar resposta simples: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }

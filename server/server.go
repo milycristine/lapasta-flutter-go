@@ -1,21 +1,23 @@
 package server
 
 import (
-    "embed"
-    "log"
-    "net/http"
-    "lapasta/api"
-    config "lapasta/config"
+	"embed"
+	api "lapasta/api"
+	config "lapasta/config"
+	"log"
+	"net/http"
 )
 
 var fs embed.FS
 
 // Controllers inicia o servidor HTTP e define a rota de login.
 func Controllers() {
-    log.Printf("Iniciando servidor na porta: %s", config.Yml.API.Port)
+	log.Printf("Iniciando servidor na porta: %s", config.Yml.API.Port)
 
-    http.HandleFunc("/login", api.Login)
-    http.Handle("/html/", http.StripPrefix("/html/", http.FileServer(http.FS(fs))))
-    
-    log.Fatal(http.ListenAndServe(":"+config.Yml.API.Port, nil))
+	http.HandleFunc("/login", api.Login)
+	http.HandleFunc("/recebimento", api.CriarRecebimento)
+	http.HandleFunc("/listar", api.ListarRecebimentos)
+	http.Handle("/html/", http.StripPrefix("/html/", http.FileServer(http.FS(fs))))
+
+	log.Fatal(http.ListenAndServe(":"+config.Yml.API.Port, nil))
 }

@@ -1,8 +1,9 @@
-package api
+package recebimento
 
 import (
 	"encoding/json"
-	"lapasta/models"
+	utils "lapasta/internal/Utils"
+	"lapasta/internal/models"
 	"log"
 	"net/http"
 
@@ -11,7 +12,7 @@ import (
 
 func CriarRecebimento(w http.ResponseWriter, r *http.Request) {
 	var recebimento models.Recebimento
-
+	utils.SetSQLConn(nil)
 	// Decodifica o JSON
 	if err := json.NewDecoder(r.Body).Decode(&recebimento); err != nil {
 		log.Println(err) // Adicione um log para verificar o erro
@@ -20,7 +21,7 @@ func CriarRecebimento(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Insere
-	if err := connectionDb.CriarRecebimento(&recebimento); err != nil {
+	if err := utils.ConnectionDb.CriarRecebimento(&recebimento); err != nil {
 		log.Println(err) // Adicione um log para verificar o erro
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -32,7 +33,7 @@ func CriarRecebimento(w http.ResponseWriter, r *http.Request) {
 }
 
 func ListarRecebimentos(w http.ResponseWriter, r *http.Request) {
-	recebimentos, err := connectionDb.ListarRecebimentos()
+	recebimentos, err := utils.ConnectionDb.ListarRecebimentos()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

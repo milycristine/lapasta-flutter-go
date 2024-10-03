@@ -3,7 +3,7 @@ package sql
 import (
 	"database/sql"
 	"fmt"
-	"lapasta/models"
+	"lapasta/internal/models"
 	"net/url"
 
 	"golang.org/x/crypto/bcrypt"

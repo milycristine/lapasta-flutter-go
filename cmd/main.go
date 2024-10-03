@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"lapasta/api"
 	config "lapasta/config"
 	database "lapasta/database"
+	utils "lapasta/internal/Utils"
 	server "lapasta/server"
 	"log"
 )
@@ -35,6 +35,6 @@ func init() {
 }
 
 func main() {
-	api.SetSQLConn(connectionLinx)
+	utils.SetSQLConn(connectionLinx)
 	server.Controllers()
 }

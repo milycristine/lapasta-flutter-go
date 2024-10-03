@@ -4,8 +4,6 @@ package auth
 import (
 	"fmt"
 	"lapasta/internal/models"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 // AuthService interface para os serviços de autenticação.
@@ -32,9 +30,8 @@ func (s *authService) Login(username, password string) (models.Login, error) {
 	}
 
 	// Verifica a senha fornecida com o hash armazenado
-	if err := bcrypt.CompareHashAndPassword([]byte(login.Password), []byte(password)); err != nil {
+	if login.Password != password {
 		return models.Login{}, fmt.Errorf("nome ou senha inválidos")
 	}
-
 	return login, nil
 }

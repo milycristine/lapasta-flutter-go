@@ -2,27 +2,34 @@ package recebimento
 
 import (
 	"encoding/json"
-	utils "lapasta/internal/Utils"
 	"lapasta/internal/models"
 	"log"
 	"net/http"
-
-	_ "github.com/denisenkom/go-mssqldb"
 )
 
-func CriarRecebimento(w http.ResponseWriter, r *http.Request) {
+type RecebimentoHandler struct {
+	service RecebimentoService
+}
+
+func NovoRecebimentoHandler(service RecebimentoService) *RecebimentoHandler {
+	return &RecebimentoHandler{
+		service: service,
+	}
+}
+
+func (h *RecebimentoHandler) CriarRecebimento(w http.ResponseWriter, r *http.Request) {
 	var recebimento models.Recebimento
-	utils.SetSQLConn(nil)
+
 	// Decodifica o JSON
 	if err := json.NewDecoder(r.Body).Decode(&recebimento); err != nil {
-		log.Println(err) // Adicione um log para verificar o erro
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	// Insere
-	if err := utils.ConnectionDb.CriarRecebimento(&recebimento); err != nil {
-		log.Println(err) // Adicione um log para verificar o erro
+	if err := h.service.CriarRecebimento(&recebimento); err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -32,8 +39,8 @@ func CriarRecebimento(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(recebimento)
 }
 
-func ListarRecebimentos(w http.ResponseWriter, r *http.Request) {
-	recebimentos, err := utils.ConnectionDb.ListarRecebimentos()
+func (h *RecebimentoHandler) ListarRecebimentos(w http.ResponseWriter, r *http.Request) {
+	recebimentos, err := h.service.ListarRecebimentos()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -1,9 +1,10 @@
 api:
-  host: localhost
-  port: "8080"
+  host:   192.168.0.218
+  port: 8080
 
 sql:
-  host: localhost
-  port: "1433"  
-  database: "lapasta"  
-  integrated_security: true 
+  host:   192.168.0.218
+  port: 1433
+  database: LaPasta
+  username: dbservidor
+  password: dbservidor@lapasta

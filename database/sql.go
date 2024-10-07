@@ -5,10 +5,14 @@ import (
     "database/sql"
     "fmt"
     "net/url"
-
+    
     _ "github.com/denisenkom/go-mssqldb"
 )
 
+type SQLStr struct {
+	url *url.URL
+	db  *sql.DB
+} 
 func MakeSQL(host, port, username, password string) (*SQLStr, error) {
     server := &SQLStr{}
     server.url = &url.URL{

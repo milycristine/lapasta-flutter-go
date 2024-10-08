@@ -21,7 +21,6 @@ func NovoPontoService(repo PontoRepository) PontoService {
 }
 
 func (s *pontoService) CriarPonto(ponto *models.Ponto) error {
-	// Validações e regras de negócio podem ser aplicadas aqui
 	return s.repo.CriarPonto(ponto)
 }
 

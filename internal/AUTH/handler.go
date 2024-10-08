@@ -1,4 +1,3 @@
-// internal/auth/handler.go
 package auth
 
 import (
@@ -7,23 +6,32 @@ import (
 	"net/http"
 )
 
-// LoginHandler gerencia a requisição de login.
 func LoginHandler(s AuthService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var loginRequest models.Login
+		response := models.ResponseDefaultModel{
+			IsSuccess: true,
+		}
+
 		if err := json.NewDecoder(r.Body).Decode(&loginRequest); err != nil {
-			http.Error(w, "Bad Request", http.StatusBadRequest)
-			return
+			response.IsSuccess = false
+			response.Error = err
+			response.ErrorMessage = "Erro ao decodificar a requisição de login"
+			w.WriteHeader(http.StatusBadRequest)
+		} else {
+			login, err := s.Login(loginRequest.Username, loginRequest.Password)
+			if err != nil {
+				response.IsSuccess = false
+				response.Error = err
+				response.ErrorMessage = "Usuário ou senha inválidas"
+				w.WriteHeader(http.StatusUnauthorized)
+			} else {
+				response.Data = login
+				w.WriteHeader(http.StatusOK)
+			}
 		}
 
-		login, err := s.Login(loginRequest.Username, loginRequest.Password)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusUnauthorized)
-			return
-		}
-
-		// Retorna a resposta de sucesso
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(login)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
 	}
 }

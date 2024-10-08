@@ -5,7 +5,7 @@ type Login struct {
 	Password string `json:"password,omitempty"`
 }
 
-//Response ...
+// Response ...
 type Response struct {
 	Status string
 	Error  string

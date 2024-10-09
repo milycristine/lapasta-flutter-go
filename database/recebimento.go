@@ -24,7 +24,6 @@ func (s *SQLStr) CriarRecebimento(recebimento *models.Recebimento) error {
 	return nil
 }
 
-// ListarRecebimentos recupera todos os recebimentos do banco de dados.
 func (s *SQLStr) ListarRecebimentos() ([]models.Recebimento, error) {
 	var recebimentos []models.Recebimento
 

@@ -19,34 +19,55 @@ func NovoRecebimentoHandler(service RecebimentoService) *RecebimentoHandler {
 
 func (h *RecebimentoHandler) CriarRecebimento(w http.ResponseWriter, r *http.Request) {
 	var recebimento models.Recebimento
+	response := models.ResponseDefaultModel{
+		IsSuccess: true,
+		Data:      recebimento,
+	}
 
-	// Decodifica o JSON
 	if err := json.NewDecoder(r.Body).Decode(&recebimento); err != nil {
 		log.Println(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		response.IsSuccess = false
+		response.Error = err
+		response.ErrorMessage = "Erro ao decodificar o recebimento"
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
 		return
 	}
 
-	// Insere
 	if err := h.service.CriarRecebimento(&recebimento); err != nil {
 		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		response.IsSuccess = false
+		response.Error = err
+		response.ErrorMessage = "Erro ao criar o recebimento"
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
 		return
 	}
 
-	// Retorna
+	response.Data = recebimento
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(recebimento)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }
 
 func (h *RecebimentoHandler) ListarRecebimentos(w http.ResponseWriter, r *http.Request) {
 	recebimentos, err := h.service.ListarRecebimentos()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	response := models.ResponseDefaultModel{
+		IsSuccess: true,
+		Data:      recebimentos,
 	}
 
-	// Retorna a lista de recebimentos
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(recebimentos)
+	if err != nil {
+		response.IsSuccess = false
+		response.Error = err
+		response.ErrorMessage = "Erro ao listar recebimentos"
+		w.WriteHeader(http.StatusInternalServerError)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }

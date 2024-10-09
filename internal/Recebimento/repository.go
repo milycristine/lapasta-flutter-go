@@ -20,11 +20,9 @@ func NovoRecebimentoRepository(db *database.SQLStr) RecebimentoRepository {
 }
 
 func (r *recebimentoRepository) CriarRecebimento(recebimento *models.Recebimento) error {
-   // Reutilizando a implementação existente
    return r.db.CriarRecebimento(recebimento)
 }
 
 func (r *recebimentoRepository) ListarRecebimentos() ([]models.Recebimento, error) {
-   // Reutilizando a implementação existente
    return r.db.ListarRecebimentos()
 }  

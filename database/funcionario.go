@@ -6,7 +6,6 @@ import (
 	"lapasta/internal/models"
 )
 
-
 func (r *SQLStr) CriarFuncionario(funcionario *models.Funcionario) error {
 	query := `
 		INSERT INTO Funcionarios (Nome, Sobrenome, Cpf, Rg, DataNasc, Email, Senha, Cargo, DateAdmissao, HoraEntrada, HoraSaida) 

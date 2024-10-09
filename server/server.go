@@ -19,7 +19,7 @@ func Controllers() {
 	repo := auth.NewAuthRepository(utils.ConnectionDb)
 	authService := auth.NewAuthService(repo)
 
-	recebimentoRepo := recebimento.NovoRecebimentoRepository(utils.ConnectionDb) 
+	recebimentoRepo := recebimento.NovoRecebimentoRepository(utils.ConnectionDb)
 	recebimentoService := recebimento.NovoRecebimentoService(recebimentoRepo)
 	recebimentoHandler := recebimento.NovoRecebimentoHandler(recebimentoService)
 
@@ -35,14 +35,14 @@ func Controllers() {
 
 	http.HandleFunc("/login", auth.LoginHandler(authService))
 
-	http.HandleFunc("/recebimento", recebimentoHandler.CriarRecebimento)         
-	http.HandleFunc("/listarRecebimento", recebimentoHandler.ListarRecebimentos) 
+	http.HandleFunc("/recebimento", recebimentoHandler.CriarRecebimento)
+	http.HandleFunc("/listarRecebimento", recebimentoHandler.ListarRecebimentos)
 
-	http.HandleFunc("/baterPonto", pontoHandler.CriarPonto)   
-	http.HandleFunc("/listarPonto", pontoHandler.ListarPontos) 
+	http.HandleFunc("/baterPonto", pontoHandler.CriarPonto)
+	http.HandleFunc("/listarPonto", pontoHandler.ListarPontos)
 
-	http.HandleFunc("/funcionario", funcionarioHandler.CriarFuncionario)         
-	http.HandleFunc("/listarFuncionario", funcionarioHandler.ListarFuncionarios) 
+	http.HandleFunc("/funcionario", funcionarioHandler.CriarFuncionario)
+	http.HandleFunc("/listarFuncionario", funcionarioHandler.ListarFuncionarios)
 
 	http.Handle("/html/", http.StripPrefix("/html/", http.FileServer(http.FS(fs))))
 

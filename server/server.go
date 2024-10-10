@@ -2,15 +2,17 @@ package server
 
 import (
 	"embed"
-	"log"
-	"net/http"
-
-	config "lapasta/config"
+	"lapasta/config"
 	auth "lapasta/internal/AUTH"
+	documento "lapasta/internal/Documento"
 	funcionario "lapasta/internal/Funcionario"
+	nota "lapasta/internal/Notas"
 	ponto "lapasta/internal/Ponto"
 	recebimento "lapasta/internal/Recebimento"
 	utils "lapasta/internal/Utils"
+
+	"log"
+	"net/http"
 )
 
 var fs embed.FS
@@ -27,6 +29,14 @@ func Controllers() {
 	pontoService := ponto.NovoPontoService(pontoRepo)
 	pontoHandler := ponto.NovoPontoHandler(pontoService)
 
+	notaRepo := nota.NovoNotaRepository(utils.ConnectionDb)
+	notaService := nota.NovaNotaService(notaRepo)
+	notaHandler := nota.NovaNotaHandler(notaService)
+
+	documentoRepo := documento.NovoDocumentoRepository(utils.ConnectionDb)
+	documentoService := documento.NovoDocumentoService(documentoRepo)
+	documentoHandler := documento.NovoDocumentoHandler(documentoService)
+
 	funcionarioRepo := funcionario.NovoFuncionarioRepository(utils.ConnectionDb)
 	funcionarioService := funcionario.NovoFuncionarioService(funcionarioRepo)
 	funcionarioHandler := funcionario.NovoFuncionarioHandler(funcionarioService)
@@ -40,6 +50,12 @@ func Controllers() {
 
 	http.HandleFunc("/baterPonto", pontoHandler.CriarPonto)
 	http.HandleFunc("/listarPonto", pontoHandler.ListarPontos)
+
+	http.HandleFunc("/nota", notaHandler.CriarNota)
+	http.HandleFunc("/listarNotas", notaHandler.ListarNotas)
+
+	http.HandleFunc("/documento", documentoHandler.CriarDocumento)
+	http.HandleFunc("/listarDocumento", documentoHandler.ListarDocumentos)
 
 	http.HandleFunc("/funcionario", funcionarioHandler.CriarFuncionario)
 	http.HandleFunc("/listarFuncionario", funcionarioHandler.ListarFuncionarios)

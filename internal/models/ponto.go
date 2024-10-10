@@ -10,3 +10,4 @@ type Ponto struct {
     Situacao       string `json:"situacao"`
     IdFuncionario  int    `json:"idFuncionario"`
 }
+    

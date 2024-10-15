@@ -7,6 +7,7 @@ import (
 	documento "lapasta/internal/Documento"
 	funcionario "lapasta/internal/Funcionario"
 	nota "lapasta/internal/Notas"
+	pagamento "lapasta/internal/Pagamento"
 	ponto "lapasta/internal/Ponto"
 	recebimento "lapasta/internal/Recebimento"
 	utils "lapasta/internal/Utils"
@@ -37,6 +38,10 @@ func Controllers() {
 	documentoService := documento.NovoDocumentoService(documentoRepo)
 	documentoHandler := documento.NovoDocumentoHandler(documentoService)
 
+	pagamentoRepo := pagamento.NovoPagamentoRepository(utils.ConnectionDb)
+	pagamentoService := pagamento.NovoPagamentoService(pagamentoRepo)
+	pagamentoHandler := pagamento.NovoPagamentoHandler(pagamentoService)
+
 	funcionarioRepo := funcionario.NovoFuncionarioRepository(utils.ConnectionDb)
 	funcionarioService := funcionario.NovoFuncionarioService(funcionarioRepo)
 	funcionarioHandler := funcionario.NovoFuncionarioHandler(funcionarioService)
@@ -56,6 +61,11 @@ func Controllers() {
 
 	http.HandleFunc("/documento", documentoHandler.CriarDocumento)
 	http.HandleFunc("/listarDocumento", documentoHandler.ListarDocumentos)
+
+	http.HandleFunc("/pagamento", pagamentoHandler.CriarPagamento)
+	http.HandleFunc("/listarPagamento", pagamentoHandler.ListarPagamentos)
+	http.HandleFunc("/listarPagamentoPorDia", pagamentoHandler.ListarPagamentosPorDia)
+	http.HandleFunc("/atualizarStatusPagamento", pagamentoHandler.AtualizarPagamento)
 
 	http.HandleFunc("/funcionario", funcionarioHandler.CriarFuncionario)
 	http.HandleFunc("/listarFuncionario", funcionarioHandler.ListarFuncionarios)

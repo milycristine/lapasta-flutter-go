@@ -22,10 +22,8 @@ type Config struct {
 	} `yaml:"sql,omitempty"`
 }
 
-// Yml é a variável global que armazena a configuração carregada.
 var Yml Config
 
-// LoadConfig carrega a configuração do arquivo config.yaml.
 func LoadConfig() error {
 	data, err := os.ReadFile("config.yaml")
 	if err != nil {
@@ -34,7 +32,6 @@ func LoadConfig() error {
 	return yaml.Unmarshal(data, &Yml)
 }
 
-// CreateConfigFile cria o arquivo config.yaml se não existir.
 func CreateConfigFile() {
 	if _, err := os.Stat("config.yaml"); err == nil {
 		fmt.Println("O arquivo 'config.yaml' já existe. Deseja sobrescrever? (y/N)")
@@ -48,7 +45,6 @@ func CreateConfigFile() {
 	writeFile()
 }
 
-// writeFile escreve a configuração no arquivo config.yaml.
 func writeFile() {
 	data, err := yaml.Marshal(Yml)
 	if err != nil {

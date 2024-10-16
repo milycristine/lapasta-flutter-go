@@ -26,7 +26,7 @@ func init() {
 	if err := config.LoadConfig(); err != nil {
 		log.Fatal(err)
 	}
-
+		
 	log.Print("connecting sql ...")
 	connectionLinx, err = database.MakeSQL(config.Yml.SQL.Host, config.Yml.SQL.Port, config.Yml.SQL.User, config.Yml.SQL.Password)
 	if err != nil {
